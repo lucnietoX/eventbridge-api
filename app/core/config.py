@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     app_name: str = "EventBridge API"
 
     class Config:
-        env_file = ".env"
+        env_file: str = ".env"
 
 
 settings = Settings()

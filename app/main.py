@@ -7,6 +7,8 @@ app = FastAPI(
     Event-driven integration backend.
 
     Receives webhooks (e.g. Stripe), validates, persists events and executes asynchronous actions for external systems (e.g. Notion).
+
+    Author: Luciano Nieto
     """,
     version="1.0.0",
 )
