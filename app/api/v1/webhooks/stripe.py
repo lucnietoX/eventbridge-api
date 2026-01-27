@@ -9,6 +9,9 @@ from app.db.deps import get_db
 from app.db import models
 from app.api.v1.webhooks.schemas import StripeEvent
 
+from fastapi import BackgroundTasks
+from app.services.executor import execute_event
+
 router = APIRouter(prefix="/webhooks", tags=["Webhooks"])
 
 
@@ -16,6 +19,7 @@ router = APIRouter(prefix="/webhooks", tags=["Webhooks"])
 async def stripe_webhook(
     event: StripeEvent,
     db: AsyncSession = Depends(get_db),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
 ):
     """Endpoint to receive Stripe webhooks."""
     db_event = models.Event(
@@ -24,7 +28,6 @@ async def stripe_webhook(
         type=event.type,
         payload=event.data,
     )
-
     db.add(db_event)
 
     try:
@@ -46,5 +49,13 @@ async def stripe_webhook(
 
     db.add(execution)
     await db.commit()
+
+    # background processing (demo integration)
+    background_tasks.add_task(
+        execute_event,
+        db_event.id,
+        execution.id,
+        db,
+    )
 
     return {"status": "webhook received", "accepted": True}
