@@ -1,5 +1,6 @@
 """Service for handling Notion payments."""
 
+from asyncio.log import logger
 import os
 import requests
 
@@ -25,6 +26,8 @@ async def create_notion_payment(
         "Notion-Version": "2022-06-28",
     }
 
+    logger.info("Creating Notion payment entry for Event ID: %s", event_id)
+
     data = {
         "parent": {"database_id": notion_database_id},
         "properties": {
@@ -39,8 +42,15 @@ async def create_notion_payment(
     }
 
     try:
+        logger.info("Sending request to Notion API for Event ID: %s", event_id)
+        logger.info("Notion API request data: %s", data)
         response = requests.post(notion_api_url, headers=headers, json=data, timeout=10)
         response.raise_for_status()
         return True
     except requests.RequestException:
+        logger.error("Failed to create Notion payment entry for Event ID: %s", event_id)
+        logger.error(
+            "Notion API response: %s",
+            response.text if "response" in locals() else "No response",
+        )
         return False

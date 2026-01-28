@@ -29,11 +29,14 @@ async def execute_event(
 
         data = event.payload or {}
 
-        attr_amount = data.get("object", {}).get("amount", 0) / 100.0  # amount in cents
+        attr_amount = (
+            data.get("object", {}).get("amount", None)
+            or data.get("object", {}).get("amount_paid", None) / 100.0
+        )  # amount in cents or amount paid.
         attr_event_id = str(event.event_id)
         attr_event_type = str(event.type)
         attr_status = stripe_map_execution_status(attr_event_type)
-        attr_customer_email = data.get("object", {}).get("customer_email", "")
+        attr_customer_email = data.get("object", {}).get("customer_email", "None")
         attr_currency = data.get("object", {}).get("currency", "EUR")
         attr_customer_id = data.get("object", {}).get("customer", "")
 
