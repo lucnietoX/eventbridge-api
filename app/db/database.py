@@ -1,8 +1,10 @@
+"""Database configuration and setup."""
+
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 import os
 
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@192.168.1.225:5431/eventbridge"
+DATABASE_URL = os.getenv("POSTGRES_ASYNC_URL")
 
 engine = create_async_engine(
     DATABASE_URL,
@@ -16,4 +18,6 @@ AsyncSessionLocal = async_sessionmaker(
 
 
 class Base(DeclarativeBase):
+    """Base class for all ORM models."""
+
     pass

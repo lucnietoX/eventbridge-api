@@ -1,3 +1,5 @@
+"""Service for executing events."""
+
 import time
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,10 +9,10 @@ from app.db import models
 
 
 async def execute_event(event_id: int, execution_id: int, db: AsyncSession):
+    """Execute the event by simulating an external API call."""
     start = time.time()
 
     try:
-        # fake external API (simula ERP / CRM)
         async with httpx.AsyncClient(timeout=5) as client:
             resp = await client.post(
                 "https://httpbin.org/post",

@@ -1,11 +1,16 @@
-from sqlalchemy import String, DateTime, JSON, Integer, UniqueConstraint, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+"""Database models."""
+
 from datetime import datetime
+from sqlalchemy import String, JSON, Integer, UniqueConstraint, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 from app.db.database import Base
 
 
 class Event(Base):
+    """Represents an Event received from an external source."""
+
     __tablename__ = "events"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -21,6 +26,8 @@ class Event(Base):
 
 
 class Execution(Base):
+    """Represents the Execution of processing an Event."""
+
     __tablename__ = "executions"
 
     id: Mapped[int] = mapped_column(primary_key=True)

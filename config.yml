@@ -1,2 +1,0 @@
-database:
-  postgresql_url: "postgresql+asyncpg://postgres:postgres@192.168.1.225:5431/eventbridge"

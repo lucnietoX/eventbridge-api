@@ -1,16 +1,16 @@
 """Stripe Webhooks API Router."""
 
-from fastapi import APIRouter, Depends, status
-import sqlalchemy
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+import logging
 
+from fastapi import BackgroundTasks
+from fastapi import APIRouter, Depends, status
+from app.services.notion.executor_notion import execute_event
 from app.db.deps import get_db
 from app.db import models
 from app.api.v1.webhooks.schemas import StripeEvent
 
-from fastapi import BackgroundTasks
-from app.services.executor import execute_event
 
 router = APIRouter(prefix="/webhooks", tags=["Webhooks"])
 
@@ -29,11 +29,19 @@ async def stripe_webhook(
         payload=event.data,
     )
     db.add(db_event)
+    logger = logging.getLogger("app.api.v1.webhooks.stripe")
+    logger.info("Received Stripe event: %s of type %s", event.id, event.type)
 
     try:
         await db.commit()
+        logger.info("Committed Stripe event: %s of type %s", event.id, event.type)
     except IntegrityError:
         await db.rollback()
+        logger.info(
+            "Rolled back Stripe event: %s of type %s due to IntegrityError",
+            event.id,
+            event.type,
+        )
         return {
             "status": "event is duplicate and has already been processed",
             "accepted": False,
@@ -50,7 +58,6 @@ async def stripe_webhook(
     db.add(execution)
     await db.commit()
 
-    # background processing (demo integration)
     background_tasks.add_task(
         execute_event,
         db_event.id,
