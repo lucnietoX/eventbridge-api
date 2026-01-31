@@ -76,6 +76,11 @@ eventbridge-api/
 └── LICENSE
 ```
 
+### Reference
+- https://developers.notion.com/reference/post-page
+- https://docs.stripe.com/api/payment_intents/object
+- https://docs.stripe.com/api
+
 # License
 ```
 This project is licensed under the MIT License. See the [LICENSE] file for details.
