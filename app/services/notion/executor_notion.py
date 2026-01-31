@@ -32,14 +32,20 @@ async def execute_event(
         attr_amount = (
             data.get("object", {}).get("amount", None)
             or data.get("object", {}).get("amount_paid", None)
+            or data.get("object", {}).get("subtotal", None)
         ) / 100.0  # amount in cents or amount paid.
         attr_event_id = str(event.event_id)
         attr_event_type = str(event.type)
         attr_status = stripe_map_execution_status(attr_event_type)
         attr_customer_email = data.get("object", {}).get("customer_email", "None")
         attr_currency = data.get("object", {}).get("currency", "EUR")
-        attr_customer_id = data.get("object", {}).get("customer", "")  # TODO
-        attr_invoice_number = data.get("object", {}).get("invoice_number", "")  # TODO
+        attr_customer_id = data.get("object", {}).get("customer", "")
+        attr_invoice_number = (
+            data.get("object", {})
+            .get("lines", {})
+            .get("data", [{}])[0]
+            .get("invoice", "")
+        )
 
         logger.info(
             "Creating Notion Payment: %s of type %s", attr_event_id, attr_event_type
@@ -52,14 +58,14 @@ async def execute_event(
             amount=attr_amount,
             currency=attr_currency,
             customer=attr_customer_id,
-            =attr_invoice_number,
+            invoice_number=attr_invoice_number,
         )
 
         status = "success" if resp else "failed"
         response_code = 200 if resp else 400
 
     except Exception as e:
-        print("Executor error:", e)
+        logger.error("Executor error:", e)
         status = "failed"
         response_code = None
 
