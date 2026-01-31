@@ -14,6 +14,9 @@ app = FastAPI(
     Receives webhooks (e.g. Stripe), validates, persists events and executes asynchronous actions for external systems (e.g. Notion).
 
     Author: Luciano Nieto
+    License: MIT
+    Repository: https://github.com/lucnietoX/eventbridge-api
+    Website: https://lucnianonieto.com
     """,
     version="1.0.0",
 )
