@@ -12,6 +12,8 @@ async def create_notion_payment(
     customer_email: str,
     amount: float,
     currency: str,
+    customer: str,
+    invoice_number: str,
 ) -> bool:
     """
     Create a payment entry in Notion for the given page ID with the specified amount and currency.
@@ -36,6 +38,10 @@ async def create_notion_payment(
             "Source": {"rich_text": [{"text": {"content": "stripe"}}]},
             "Status": {"rich_text": [{"text": {"content": str(status)}}]},
             "CustomerEmail": {"email": str(customer_email)},
+            "Customer": {"rich_text": [{"text": {"content": str(customer)}}]},
+            "InvoiceNumber": {
+                "rich_text": [{"text": {"content": str(invoice_number)}}]
+            },
             "Currency": {"rich_text": [{"text": {"content": str(currency)}}]},
             "Amount": {"number": float(amount)},
         },
@@ -43,7 +49,7 @@ async def create_notion_payment(
 
     try:
         logger.info("Sending request to Notion API for Event ID: %s", event_id)
-        logger.info("Notion API request data: %s", data)
+        logger.info("Notion API request data payload: %s", data)
         response = requests.post(notion_api_url, headers=headers, json=data, timeout=10)
         response.raise_for_status()
         return True

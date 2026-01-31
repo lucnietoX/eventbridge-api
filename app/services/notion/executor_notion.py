@@ -38,7 +38,8 @@ async def execute_event(
         attr_status = stripe_map_execution_status(attr_event_type)
         attr_customer_email = data.get("object", {}).get("customer_email", "None")
         attr_currency = data.get("object", {}).get("currency", "EUR")
-        attr_customer_id = data.get("object", {}).get("customer", "")
+        attr_customer_id = data.get("object", {}).get("customer", "")  # TODO
+        attr_invoice_number = data.get("object", {}).get("invoice_number", "")  # TODO
 
         logger.info(
             "Creating Notion Payment: %s of type %s", attr_event_id, attr_event_type
@@ -50,6 +51,8 @@ async def execute_event(
             customer_email=attr_customer_email,
             amount=attr_amount,
             currency=attr_currency,
+            customer=attr_customer_id,
+            =attr_invoice_number,
         )
 
         status = "success" if resp else "failed"
